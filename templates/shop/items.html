@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Prodotti</h2>
+<ul>
+  {% for item in items %}
+    <li>
+      <a href="{% url 'item_detail' item.id %}">{{ item.name }}</a> - €{{ item.price }}
+    </li>
+  {% empty %}
+    <li>Nessun prodotto disponibile.</li>
+  {% endfor %}
+</ul>
+
+{% if user.is_superuser %}
+<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addProductModal">
+  Aggiungi Prodotto
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="addProductModalLabel">Nuovo Prodotto</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+        </div>
+        <div class="modal-body">
+          {{ form.as_p }}
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Salva</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

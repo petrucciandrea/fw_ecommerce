@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Categorie</h2>
+<ul>
+  {% for category in categories %}
+    <li>
+      <a href="{% url 'category_items' category.id %}">{{ category.name }}</a>
+    </li>
+  {% empty %}
+    <li>Nessuna categoria disponibile.</li>
+  {% endfor %}
+</ul>
+
+{% if user.is_superuser %}
+    <!-- Pulsante per aprire il modale -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#categoryModal">
+      Aggiungi Categoria
+    </button>
+
+    <!-- Modale Bootstrap -->
+    <div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form method="POST">
+            {% csrf_token %}
+            <div class="modal-header">
+              <h5 class="modal-title" id="categoryModalLabel">Nuova Categoria</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+            </div>
+            <div class="modal-body">
+              {{ form.as_p }}
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-success">Salva</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+{% endblock %}
