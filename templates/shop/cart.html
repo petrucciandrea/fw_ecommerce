@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="container">
+
 <h2>Carrello</h2>
 <table class="table">
   <thead>
@@ -28,5 +30,6 @@
 </table>
 
 <h4>Totale: {{ total }} €</h4>
-<a href="#" class="btn btn-success">Procedi all'ordine</a>
+<a href="{% url 'checkout' %}" class="btn btn-success">Acquista</a>
+</div>
 {% endblock %}

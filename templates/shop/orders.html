@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+  <h2 class="mb-2">I tuoi ordini</h2>
+  
+  <table class="table table-bordered">
+    <thead class="table-light">
+      <tr>
+        <th>#</th>
+        {% if user.is_superuser %}<th>Utente</th>{%endif%}
+        <th>Data</th>
+        <th>Stato</th>
+        <th>Prodotti</th>
+        <th>Totale</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td>{{ order.id }}</td>
+        {% if user.is_superuser %}<td>{{ order.user.username }}</td>{% endif %}
+        <td>{{ order.date|date:"d/m/Y H:i" }}</td>
+        <td>
+          {% if order.state %}
+            <span class="text-success">Consegnato</span>
+          {% else %}
+            <span class="text-warning">In corso</span>
+          {% endif %}
+
+          {% if user.is_superuser and not order.state %}
+            <!-- Bottone per aprire il modal -->
+            <button class="btn btn-sm btn-outline-primary ms-2" data-bs-toggle="modal" data-bs-target="#updateStateModal{{ order.id }}">
+              Modifica
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="updateStateModal{{ order.id }}" tabindex="-1" aria-labelledby="modalLabel{{ order.id }}" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <form method="POST" action="{% url 'complete_order' order.id %}">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="modalLabel{{ order.id }}">Modifica Stato Ordine #{{ order.id }}</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="state" id="state{{ order.id }}" {% if order.state %}checked{% endif %}>
+                        <label class="form-check-label" for="state{{ order.id }}">Consegnato</label>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-primary">Salva</button>
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        </td>
+
+        <td>
+          <ul class="list-group">
+            {% for oi in order.orderitem_set.all %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ oi.item.name }} × {{ oi.quantity }}
+                {% if not oi.review_star and order.state and order.user.username == user.username %}
+                  <span class="badge bg-primary" data-bs-toggle="modal" data-bs-target="#reviewModal{{ oi.id }}" style="cursor: pointer;">
+                    <i class="bi bi-pen-fill"></i>
+                  </span>
+                  
+                  <!-- Modal -->
+                  <div class="modal fade" id="reviewModal{{ oi.id }}" tabindex="-1">
+                    <div class="modal-dialog">
+                      <form class="modal-content" method="post" action="{% url 'add_review' oi.item.id %}">
+                        {% csrf_token %}
+                        <div class="modal-header">
+                          <h5 class="modal-title">Scrivi una recensione per {{ oi.item.name }}</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="mb-3">
+                            <label for="review_text_{{ oi.id }}" class="form-label">Recensione</label>
+                            <textarea name="review_text" id="review_text_{{ oi.id }}" class="form-control" placeholder="Scrivi la tua recensione..." required></textarea>
+                          </div>
+                          <div class="mb-3">
+                            <label for="review_star_{{ oi.id }}" class="form-label">Voto</label>
+                            <select name="review_star" id="review_star_{{ oi.id }}" class="form-select" required>
+                              <option value="" disabled selected>Seleziona un voto</option>
+                              {% for i in "12345" %}
+                                <option value="{{ i }}">{{ i }} stelle</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="submit" class="btn btn-primary">Invia</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                {% elif oi.review_star %}
+                  <small class="text-muted" alt="{{ oi.review_star }}">
+                      {% for i in "12345" %}
+                      {% with i_num=i|add:"0" %}
+                          {% if oi.review_star >= i_num %}
+                              <i class="bi bi-star-fill text-warning"></i>
+                          {% else %}
+                              <i class="bi bi-star text-warning"></i>
+                          {% endif %}
+                      {% endwith %}
+                      {% endfor %}
+                  </small>
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </td>
+        <td>€{{ order.total_price|floatformat:2 }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6">Nessun ordine trovato.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
