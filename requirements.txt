@@ -1,3 +1,4 @@
 Django==5.2.4
 crispy-bootstrap5
 django-crispy-forms
+whitenoise
