@@ -11,6 +11,10 @@
             {% csrf_token %}
             <button type="submit" class="btn btn-outline-danger">Logout</button>
         </form>
+        <form method="post" action="{% url 'password_change_form' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-secondary">Change Password</button>
+        </form>
     {% endif %}
 </div>
 {% endblock %}

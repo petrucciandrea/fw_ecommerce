@@ -30,12 +30,12 @@
           {% endif %}
 
           {% if user.is_superuser and not order.state %}
-            <!-- Bottone per aprire il modal -->
             <button class="btn btn-sm btn-outline-primary ms-2" data-bs-toggle="modal" data-bs-target="#updateStateModal{{ order.id }}">
               Modifica
             </button>
+          {% endif %}
 
-            <!-- Modal -->
+            <!-- MODAL STATO ORDINE -->
             <div class="modal fade" id="updateStateModal{{ order.id }}" tabindex="-1" aria-labelledby="modalLabel{{ order.id }}" aria-hidden="true">
               <div class="modal-dialog">
                 <div class="modal-content">
@@ -59,7 +59,6 @@
                 </div>
               </div>
             </div>
-          {% endif %}
         </td>
 
         <td>
@@ -72,10 +71,10 @@
                     <i class="bi bi-pen-fill"></i>
                   </span>
                   
-                  <!-- Modal -->
+                  <!-- MODAL RECENSIONI -->
                   <div class="modal fade" id="reviewModal{{ oi.id }}" tabindex="-1">
                     <div class="modal-dialog">
-                      <form class="modal-content" method="post" action="{% url 'add_review' oi.item.id %}">
+                      <form class="modal-content" method="post" action="{% url 'add_review' oi.id %}">
                         {% csrf_token %}
                         <div class="modal-header">
                           <h5 class="modal-title">Scrivi una recensione per {{ oi.item.name }}</h5>

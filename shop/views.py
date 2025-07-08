@@ -47,8 +47,9 @@ def home_view(request):
     return render(request, "shop/home.html", {"items_per_category": items_per_category})
 
 def item_detail_view(request, item_id):
-    item = get_object_or_404(Item.objects.annotate(avg_stars=Avg('orderitem__review_star'),n_review=Count('orderitem__review_star')), id=item_id)
-    return render(request, "shop/item_detail.html", {"item": item})
+    item = get_object_or_404(Item.objects.annotate(avg_stars=Avg('orderitem__review_star'), n_review=Count('orderitem__review_star')), id=item_id)
+    reviews = OrderItem.objects.filter(item=item)
+    return render(request, "shop/item_detail.html", {"item": item, "reviews": reviews})
 
 @login_required
 def add_to_cart(request, item_id):
@@ -135,11 +136,11 @@ def complete_order(request, order_id):
     return redirect('orders_view')
 
 @login_required
-def add_review(request, item_id):
+def add_review(request, orderitem_id):
     if request.method == "POST":
         review_text = request.POST.get("review_text")
         review_star = request.POST.get("review_star")
-        order_item = get_object_or_404(OrderItem, item__id=item_id, order__user=request.user)
+        order_item = get_object_or_404(OrderItem, id=orderitem_id, order__user=request.user)
 
         if not order_item.review_text and not order_item.review_star:
             order_item.review_text = review_text

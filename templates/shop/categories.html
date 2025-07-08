@@ -6,7 +6,7 @@
 <ul>
   {% for category in categories %}
     <li>
-      <a href="{% url 'category_items' category.id %}">{{ category.name }}</a>
+      <a>{{ category.name }}</a>
     </li>
   {% empty %}
     <li>Nessuna categoria disponibile.</li>
