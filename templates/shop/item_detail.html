@@ -48,6 +48,7 @@
   <h4>Recensioni</h4>
   <div class="reviews">
     {% for review in reviews %}
+      {% if review.review_star %}
       <div class="review mb-3">
         <p class="mb-0">
           <strong>{{ review.order.user.username }}</strong>
@@ -69,6 +70,7 @@
           <small>{{ review.review_text }}</small>
         </p>
       </div>
+      {% endif %}
     {% endfor %}
   </div>
 </div>
