@@ -84,6 +84,10 @@ Amministratore
 - **Username:** admin
 - **Password:** Universita
 
-Utente
+Utente 1
 - **Username:** mrossi
+- **Password:** ProvaProva
+
+Utente 2
+- **Username:** ppallino
 - **Password:** ProvaProva
