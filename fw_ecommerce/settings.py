@@ -35,7 +35,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     os.environ.get('RAILWAY_HOST', 'fwecommerce-production.up.railway.app')  # fallback
 ]
-
+CSRF_TRUSTED_ORIGINS="https://fwecommerce-production.up.railway.app/"
 
 # Application definition
 
