@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = "3a2$))239vpmt5s8k+!l$ccm$m-1v%@!ny+cl!5o@bxatnpl^a"
 
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
@@ -81,16 +81,22 @@ WSGI_APPLICATION = 'fw_ecommerce.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-DATABASES = {
-    'default': dj_database_url.config(
-        default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
-        conn_max_age=600,
-        ssl_require=True
-    )
-}
-
+# Controlla se DATABASE_URL è presente (cioè se siamo su Railway)
+if os.environ.get("DATABASE_URL"):
+    DATABASES = {
+        'default': dj_database_url.config(
+            conn_max_age=600,
+            ssl_require=True
+        )
+    }
+else:
+    # Siamo in locale → usa SQLite
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
